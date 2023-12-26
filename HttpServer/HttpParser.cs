@@ -57,11 +57,11 @@ public static class HttpParser
             // validate header
             string[] curHeader = curLine.Split(':');
 
-            if(curHeader.Length is not 2)
+            if(curHeader.Length < 2)
                 throw new HttpRequestException("Invalid HTTP header");
 
             // store header
-            headers.Add(curHeader[1], curHeader[2]);
+            headers.Add(curHeader[0], curHeader[1]);
 
             // content length
             if(curHeader[0].Contains("Content-Length"))
