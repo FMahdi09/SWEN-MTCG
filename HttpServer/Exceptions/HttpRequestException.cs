@@ -1,2 +1,0 @@
-namespace SWEN.HttpServer.Exceptions;
-
