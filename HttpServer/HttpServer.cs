@@ -20,10 +20,13 @@ public class HttpServer(IPAddress iPAddress, int port, ILogic logic)
     /// </summary>
     public void Start()
     {
-        TcpClient tcpClient = _tcpListener.AcceptTcpClient();
+        while(true)
+        {
+            TcpClient tcpClient = _tcpListener.AcceptTcpClient();
 
-        Thread clientThread = new(() => HandleClient(tcpClient));
-        clientThread.Start();
+            Thread clientThread = new(() => HandleClient(tcpClient));
+            clientThread.Start();
+        }
     }
 
     private void HandleClient(TcpClient client)
