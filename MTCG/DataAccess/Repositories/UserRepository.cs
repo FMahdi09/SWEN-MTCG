@@ -85,5 +85,31 @@ public class UserRepository(IDbConnection connection) : BaseRepository(connectio
             );
         }
         return null;
+    }
+
+    // UPDATE
+    public bool UpdateUser(User user)
+    {
+        // create Command
+        using NpgsqlCommand command = new();
+        command.CommandText = "UPDATE users " +
+                              "SET bio = @bio, image = @image, username = @username " +
+                              "WHERE id = @id " +
+                              "AND " +
+                              "NOT EXISTS (" +
+                              "SELECT id FROM users WHERE username = @username AND id != @id " +
+                              ") " +
+                              "RETURNING id";
+
+        // add parameters
+        command.AddParameterWithValue("bio", DbType.String, user.Bio);
+        command.AddParameterWithValue("image", DbType.String, user.Image);
+        command.AddParameterWithValue("username", DbType.String, user.Username);
+        command.AddParameterWithValue("id", DbType.Int32, user.Id);
+
+        // execute command
+        using IDataReader reader = ExecuteQuery(command);
+
+        return reader.Read();
     }   
 }

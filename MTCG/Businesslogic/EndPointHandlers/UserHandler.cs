@@ -85,4 +85,50 @@ public class UserHandler(string connectionString)
            return new HttpResponse("500 Internal Server Error", JsonSerializer.Serialize(new Error("Unable to connect to database")));
         }
     }
+
+    [EndPoint(HttpMethods.PUT, "/users/:username")]
+    public HttpResponse PutUser(HttpRequest request)
+    {
+        try
+        {
+            // get username from resource
+            string username = request.Resource[1];
+
+            // deserialize body
+            UserData? userData = JsonSerializer.Deserialize<UserData>(request.Body);
+
+            // check if body is valid
+            if( userData is null      ||
+                userData.Username is null ||
+                userData.Bio is null ||
+                userData.Image is null)
+                return new HttpResponse("400 Bad Request", JsonSerializer.Serialize(new Error("Invalid Body")));
+            
+            // create unit of work
+            using UnitOfWork unit = new(_connectionString, withTransaction: false);
+
+            // get user from token and check permission
+            if(unit.UserRepository.GetUser(request.GetToken()) is not User user ||
+               user.Username != username)
+               return new HttpResponse("401 Unauthorized", JsonSerializer.Serialize(new Error("Access token missing or invalid")));   
+
+            // update user
+            user.Username = userData.Username;
+            user.Bio = userData.Bio;
+            user.Image = userData.Image;
+
+            if(!unit.UserRepository.UpdateUser(user))
+                return new HttpResponse("409 Conflict", JsonSerializer.Serialize(new Error("Username already exists")));
+
+            return new HttpResponse("200 OK");
+        }
+        catch(JsonException)
+        {
+            return new HttpResponse("400 Bad Request", JsonSerializer.Serialize(new Error("Invalid Body")));
+        }
+        catch(NpgsqlException)
+        {
+           return new HttpResponse("500 Internal Server Error", JsonSerializer.Serialize(new Error("Unable to connect to database")));
+        }
+    }
 }
