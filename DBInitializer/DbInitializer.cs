@@ -2,7 +2,7 @@ using Npgsql;
 
 namespace SWEN.DbInitializer;
 
-public class DbInitializer(DbConfig config)
+public class DBInitializer(DbConfig config)
 {
     private readonly DbConfig _config = config;
 

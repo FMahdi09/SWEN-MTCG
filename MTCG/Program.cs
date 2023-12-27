@@ -11,7 +11,7 @@ DbConfig config = new(
     dropScript: @"C:\Users\fabia\Documents\Technikum\SWEN\Semesterprojekt\MTCG\DataAccess\Scripts\dropDatabase.sql"
 );
 
-DbInitializer dbInitializer = new(config);
+DBInitializer dbInitializer = new(config);
 dbInitializer.InitDB();
 
 // create logic

@@ -17,4 +17,10 @@
     <PackageReference Include="coverlet.collector" Version="6.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\DBInitializer\DBInitializer.csproj" />
+    <ProjectReference Include="..\HttpServer\HttpServer.csproj" />
+    <ProjectReference Include="..\MTCG\MTCG.csproj" />
+  </ItemGroup>
+
 </Project>

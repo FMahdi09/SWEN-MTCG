@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HttpServer", "HttpServer\Ht
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DBInitializer", "DBInitializer\DBInitializer.csproj", "{6ED9E647-6F7E-4160-969A-52E9A663642A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MTCG.Tests", "MTCG.Tests\MTCG.Tests.csproj", "{156AD7D9-7204-4782-AEF2-531FE466224E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{6ED9E647-6F7E-4160-969A-52E9A663642A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6ED9E647-6F7E-4160-969A-52E9A663642A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6ED9E647-6F7E-4160-969A-52E9A663642A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{156AD7D9-7204-4782-AEF2-531FE466224E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{156AD7D9-7204-4782-AEF2-531FE466224E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{156AD7D9-7204-4782-AEF2-531FE466224E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{156AD7D9-7204-4782-AEF2-531FE466224E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
