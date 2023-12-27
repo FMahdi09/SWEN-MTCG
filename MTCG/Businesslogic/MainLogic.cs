@@ -8,9 +8,6 @@ using SWEN.MTCG.Models.SerializationObjects;
 
 namespace SWEN.MTCG.Businesslogic;
 
-/// <summary>
-/// main logic that routes request to the corresponding handlers
-/// </summary>
 public class MainLogic : ILogic
 {
     // endpoint handlers
@@ -22,10 +19,6 @@ public class MainLogic : ILogic
     private readonly Dictionary<string[], MethodInfo> _putEndpoints = [];
     private readonly Dictionary<string[], MethodInfo> _delEndpoints = [];
 
-    /// <summary>
-    /// instantiates the main logic. uses methods with the attribute endpointhandler from classes
-    /// with the attribute endpoint to handle requests
-    /// </summary>
     public MainLogic()
     {
         string connectionString = "Host=localhost;Username=postgres;Password=postgres;Database=mydb";
@@ -66,11 +59,6 @@ public class MainLogic : ILogic
         }
     }
 
-    /// <summary>
-    /// routes request to the corresponing handler and returns the handlers response
-    /// </summary>
-    /// <param name="request"> the incoming request </param>
-    /// <returns> the handlers response </returns>
     public HttpResponse GetResponse(HttpRequest request)
     {
         if(request.Resource.Length < 1)
