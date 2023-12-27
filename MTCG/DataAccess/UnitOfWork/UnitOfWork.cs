@@ -1,6 +1,6 @@
 using Npgsql;
 
-namespace SWEN.MTCG.BusinessLogic.UnitOfWork;
+namespace SWEN.MTCG.DataAccess.UnitOfWork;
 
 internal class UnitOfWork : IDisposable
 {
