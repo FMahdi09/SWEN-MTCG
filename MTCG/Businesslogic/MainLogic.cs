@@ -1,5 +1,6 @@
 using System.Reflection;
 using System.Text.Json;
+using Npgsql;
 using SWEN.HttpServer;
 using SWEN.HttpServer.Base;
 using SWEN.HttpServer.Enums;
@@ -85,17 +86,17 @@ public class MainLogic : ILogic
                 endpoint = _delEndpoints.Where(x => x.Key.SequenceEqual(request.Resource))
                                         .Select(x => x.Value).FirstOrDefault();
                 break;
-       }
+        }
 
-       // call endpoint function with corresponding handler
-       if(endpoint is not null && endpoint.DeclaringType is not null)
-       {
-            object handler = _handlers[endpoint.DeclaringType];
+        // call endpoint function with corresponding handler
+        if(endpoint is not null && endpoint.DeclaringType is not null)
+        {
+                    object handler = _handlers[endpoint.DeclaringType];
 
-            return (HttpResponse?)endpoint.Invoke(handler, [request]) ?? 
-                new HttpResponse("400 Bad Request", JsonSerializer.Serialize(new Error("Invalid resource requested")));
-       }
+                return (HttpResponse?)endpoint.Invoke(handler, [request]) ?? 
+                    new HttpResponse("400 Bad Request", JsonSerializer.Serialize(new Error("Invalid resource requested")));
+        }
 
-       return new HttpResponse("400 Bad Request", JsonSerializer.Serialize(new Error("Invalid resource requested")));
+        return new HttpResponse("400 Bad Request", JsonSerializer.Serialize(new Error("Invalid resource requested")));
     }
 }

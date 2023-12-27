@@ -1,4 +1,5 @@
 using Npgsql;
+using SWEN.MTCG.DataAccess.Repositories;
 
 namespace SWEN.MTCG.DataAccess.UnitOfWork;
 
@@ -10,6 +11,19 @@ internal class UnitOfWork : IDisposable
     private bool _disposed = false;
     private bool _committed = false;
     
+    // repositories
+
+    private UserRepository? _userRepository;
+
+    public UserRepository UserRepository
+    {
+        get
+        {
+            _userRepository ??= new(_connection);
+            return _userRepository;
+        }
+    }
+
     // constructor
     public UnitOfWork(string connectionString, bool withTransaction)
     {            

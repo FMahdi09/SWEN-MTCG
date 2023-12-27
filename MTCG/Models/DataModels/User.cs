@@ -1,0 +1,11 @@
+namespace SWEN.MTCG.Models.DataModels;
+
+public class User(string username, string password, int id = -1, string bio = "", string image = "", int currency = 0)
+{
+    public int Id { get; set; } = id;
+    public string Username { get; set; } = username;
+    public string Password { get; set; } = password;
+    public string Bio { get; set; } = bio;
+    public string Image { get; set; } = image;
+    public int Currency { get; set; } = currency;
+}
