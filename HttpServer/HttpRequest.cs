@@ -46,4 +46,16 @@ public class HttpRequest
     public HttpRequest(HttpMethods method, string[] resource, Dictionary<string, string> headers)
         => (Method, Resource, Body, Headers) = (method, resource, string.Empty, headers);  
 
+
+    /// <summary>
+    /// gets the token from the authorization header
+    /// </summary>
+    /// <returns> return the authorization header, if no authorization header has been provided returns string.Empty</returns>
+    public string GetToken()
+    {
+        if(!Headers.TryGetValue("Authorization", out string? value))
+            return string.Empty;
+
+        return value;
+    }
 }

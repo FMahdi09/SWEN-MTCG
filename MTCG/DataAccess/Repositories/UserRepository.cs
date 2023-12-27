@@ -60,4 +60,30 @@ public class UserRepository(IDbConnection connection) : BaseRepository(connectio
         }
         return null;
     }
+
+    public User? GetUser(string token)
+    {
+        // create command
+        using NpgsqlCommand command = new();
+        command.CommandText = "SELECT * FROM users " + 
+                               "WHERE id = (SELECT userid FROM tokens WHERE guid = @token)"; 
+        // add parameters
+        command.AddParameterWithValue("token", DbType.String, token);
+
+        // execute query
+        using IDataReader reader = ExecuteQuery(command);
+
+        if(reader.Read())
+        {
+            return new User(
+                (string)reader["username"],
+                (string)reader["password"],
+                (int)reader["id"],
+                (string)reader["bio"],
+                (string)reader["image"],
+                (int)reader["currency"]
+            );
+        }
+        return null;
+    }   
 }

@@ -5,6 +5,7 @@ using SWEN.HttpServer;
 using SWEN.HttpServer.Base;
 using SWEN.HttpServer.Enums;
 using SWEN.MTCG.BusinessLogic.Attributes;
+using SWEN.MTCG.BusinessLogic.DictionaryExtensions;
 using SWEN.MTCG.Models.SerializationObjects;
 
 namespace SWEN.MTCG.Businesslogic;
@@ -71,20 +72,16 @@ public class MainLogic : ILogic
         switch(request.Method)
         {
             case HttpMethods.GET:
-                endpoint = _getEndpoints.Where(x => x.Key.SequenceEqual(request.Resource))
-                                        .Select(x => x.Value).FirstOrDefault();
+                endpoint = _getEndpoints.GetMethodFromResource(request.Resource);
                 break;
             case HttpMethods.POST:
-                endpoint = _postEndpoints.Where(x => x.Key.SequenceEqual(request.Resource))
-                                        .Select(x => x.Value).FirstOrDefault();
+                endpoint = _postEndpoints.GetMethodFromResource(request.Resource);
                 break;
             case HttpMethods.PUT:
-                endpoint = _putEndpoints.Where(x => x.Key.SequenceEqual(request.Resource))
-                                        .Select(x => x.Value).FirstOrDefault();
+                endpoint = _putEndpoints.GetMethodFromResource(request.Resource);
                 break;
             case HttpMethods.DELETE:
-                endpoint = _delEndpoints.Where(x => x.Key.SequenceEqual(request.Resource))
-                                        .Select(x => x.Value).FirstOrDefault();
+                endpoint = _delEndpoints.GetMethodFromResource(request.Resource);
                 break;
         }
 

@@ -61,7 +61,7 @@ public static class HttpParser
                 throw new HttpRequestException("Invalid HTTP header");
 
             // store header
-            headers.Add(curHeader[0], curHeader[1]);
+            headers.Add(curHeader[0].Trim(), curHeader[1].Trim());
 
             // content length
             if(curHeader[0].Contains("Content-Length"))

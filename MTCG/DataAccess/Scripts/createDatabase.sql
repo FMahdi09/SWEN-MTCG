@@ -14,8 +14,8 @@ CREATE TABLE IF NOT EXISTS users(
 CREATE TABLE IF NOT EXISTS tokens(
     id SERIAL NOT NULL UNIQUE,
     guid VARCHAR NOT NULL,
-    userId INT NOT NULL,
+    userid INT NOT NULL,
     CONSTRAINT fkUserId
-        FOREIGN KEY(userId)
+        FOREIGN KEY(userid)
             REFERENCES users(id)
 );
