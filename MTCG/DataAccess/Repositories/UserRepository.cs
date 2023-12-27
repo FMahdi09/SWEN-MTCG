@@ -30,4 +30,34 @@ public class UserRepository(IDbConnection connection) : BaseRepository(connectio
 
         return reader.Read();
     }
+
+    // READ
+    public User? GetUser(string username, string password)
+    {
+        // create command
+        using NpgsqlCommand command = new();
+        command.CommandText = "SELECT * FROM users " + 
+                              "WHERE username = @username " +
+                              "AND password = @password";
+
+        // add parameters
+        command.AddParameterWithValue("username", DbType.String, username);
+        command.AddParameterWithValue("password", DbType.String, password);
+
+        // execute query
+        using IDataReader reader = ExecuteQuery(command);
+
+        if(reader.Read())
+        {
+            return new User(
+                (string)reader["username"],
+                (string)reader["password"],
+                (int)reader["id"],
+                (string)reader["bio"],
+                (string)reader["image"],
+                (int)reader["currency"]
+            );
+        }
+        return null;
+    }
 }

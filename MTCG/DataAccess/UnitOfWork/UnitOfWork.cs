@@ -24,6 +24,17 @@ internal class UnitOfWork : IDisposable
         }
     }
 
+    private TokenRepository? _tokenRepository;
+
+    public TokenRepository TokenRepository
+    {
+        get
+        {
+            _tokenRepository ??= new(_connection);
+            return _tokenRepository;
+        }
+    }
+
     // constructor
     public UnitOfWork(string connectionString, bool withTransaction)
     {            

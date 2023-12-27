@@ -1,1 +1,7 @@
-DROP TABLE users CASCADE;
+-- users
+
+DROP TABLE IF EXISTS users CASCADE;
+
+-- tokens
+
+DROP TABLE IF EXISTS tokens CASCADE;
