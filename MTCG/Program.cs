@@ -1,13 +1,18 @@
 ﻿using System.Net;
+using SWEN.DbInitializer;
 using SWEN.HttpServer;
 using SWEN.MTCG.Businesslogic;
-using SWEN.MTCG.DataAccess;
 
 // initialize database
-DbInitializer dbInit = new("test");
+DbConfig config = new(
+    connectionString: "Host=localhost;Username=postgres;Password=postgres;Database=mydb",
+    dropDb: true,
+    createScript: @"C:\Users\fabia\Documents\Technikum\SWEN\Semesterprojekt\MTCG\DataAccess\Scripts\createDatabase.sql",
+    dropScript: @"C:\Users\fabia\Documents\Technikum\SWEN\Semesterprojekt\MTCG\DataAccess\Scripts\dropDatabase.sql"
+);
 
-dbInit.DropDatabase();
-dbInit.CreateDatabase();
+DbInitializer dbInitializer = new(config);
+dbInitializer.InitDB();
 
 // create logic
 MainLogic mainLogic = new();

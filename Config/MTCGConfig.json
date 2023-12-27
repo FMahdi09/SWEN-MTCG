@@ -1,0 +1,6 @@
+{
+    "ConnectionString" : "Host=localhost;Username=postgres;Password=postgres;Database=mydb",
+    "CreateScript" : "C:\\Users\\fabia\\Documents\\Technikum\\SWEN\\Semesterprojekt\\MTCG\\DataAccess\\Scripts\\createDatabase.sql",
+    "DropDB" : true,
+    "DropScript" : "C:\\Users\\fabia\\Documents\\Technikum\\SWEN\\Semesterprojekt\\MTCG\\DataAccess\\Scripts\\dropDatabase.sql"
+}

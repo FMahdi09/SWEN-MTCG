@@ -2,6 +2,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\HttpServer\HttpServer.csproj" />
+    <ProjectReference Include="..\DBInitializer\DBInitializer.csproj" />
   </ItemGroup>
 
   <ItemGroup>

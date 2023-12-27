@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MTCG", "MTCG\MTCG.csproj", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HttpServer", "HttpServer\HttpServer.csproj", "{956C5E48-E5BC-410D-B004-0A96BF0A27B8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DBInitializer", "DBInitializer\DBInitializer.csproj", "{6ED9E647-6F7E-4160-969A-52E9A663642A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{956C5E48-E5BC-410D-B004-0A96BF0A27B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{956C5E48-E5BC-410D-B004-0A96BF0A27B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{956C5E48-E5BC-410D-B004-0A96BF0A27B8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6ED9E647-6F7E-4160-969A-52E9A663642A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6ED9E647-6F7E-4160-969A-52E9A663642A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6ED9E647-6F7E-4160-969A-52E9A663642A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6ED9E647-6F7E-4160-969A-52E9A663642A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
