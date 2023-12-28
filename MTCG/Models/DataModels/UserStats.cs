@@ -1,4 +1,4 @@
-namespace SWEN.MTCG.Models.DAtaModels;
+namespace SWEN.MTCG.Models.DataModels;
 
 public class UserStats(string name, int score, int wins, int losses)
 {

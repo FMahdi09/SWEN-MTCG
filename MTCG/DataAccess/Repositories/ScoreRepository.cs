@@ -2,7 +2,6 @@ using System.Data;
 using Npgsql;
 using SWEN.MTCG.DataAccess.Base;
 using SWEN.MTCG.Models.DataModels;
-using SWEN.MTCG.Models.DAtaModels;
 
 namespace SWEN.MTCG.DataAccess.Repositories;
 

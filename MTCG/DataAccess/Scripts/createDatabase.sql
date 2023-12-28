@@ -140,7 +140,7 @@ VALUES
 CREATE TABLE IF NOT EXISTS createdcards(
     id SERIAL NOT NULL UNIQUE,
     guid VARCHAR NOT NULL,
-    userid INT NOT NULL,
+    userid INT,
     cardid INT NOT NULL,
     deck BOOL DEFAULT false,
     -- constraints
@@ -151,3 +151,24 @@ CREATE TABLE IF NOT EXISTS createdcards(
         FOREIGN KEY(cardid)
             REFERENCES cards(id)
 );
+
+-- tradingdeals
+
+CREATE TABLE IF NOT EXISTS tradingdeals(
+    id SERIAL NOT NULL UNIQUE,
+    guid VARCHAR NOT NULL,
+    userid INT NOT NULL,
+    cardid INT NOT NULL,
+    mindamage INT NOT NULL,
+    cardtypeid INT NOT NULL,
+    -- constraints
+    CONSTRAINT fkUserid
+        FOREIGN KEY(userid)
+            REFERENCES users(id),
+    CONSTRAINT fkCardId
+        FOREIGN KEY(cardid)
+            REFERENCES createdcards(id),
+    CONSTRAINT fkCardtypeId
+        FOREIGN KEY(cardtypeid)
+            REFERENCES cardtypes(id)
+)

@@ -5,7 +5,6 @@ using SWEN.HttpServer.Enums;
 using SWEN.MTCG.BusinessLogic.Attributes;
 using SWEN.MTCG.DataAccess.UnitOfWork;
 using SWEN.MTCG.Models.DataModels;
-using SWEN.MTCG.Models.DAtaModels;
 using SWEN.MTCG.Models.SerializationObjects;
 
 namespace SWEN.MTCG.BusinessLogic.EndpointHandlers;
