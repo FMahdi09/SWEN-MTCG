@@ -35,6 +35,17 @@ internal class UnitOfWork : IDisposable
         }
     }
 
+    private CardRepository? _cardRepository;
+
+    public CardRepository CardRepository
+    {
+        get
+        {
+            _cardRepository ??= new(_connection);
+            return _cardRepository;
+        }
+    }
+
     // constructor
     public UnitOfWork(string connectionString, bool withTransaction)
     {            

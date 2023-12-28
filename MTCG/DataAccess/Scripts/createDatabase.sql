@@ -138,5 +138,13 @@ CREATE TABLE IF NOT EXISTS createdcards(
     id SERIAL NOT NULL UNIQUE,
     guid VARCHAR NOT NULL,
     userid INT NOT NULL,
-    deck BOOL
+    cardid INT NOT NULL,
+    deck BOOL,
+    -- constraints
+    CONSTRAINT fkUserId
+        FOREIGN KEY(userid)
+            REFERENCES users(id),
+    CONSTRAINT fkCardId
+        FOREIGN KEY(cardid)
+            REFERENCES cards(id)
 );
