@@ -100,4 +100,38 @@ public class TradingHandler(string connectionString)
            return new HttpResponse("500 Internal Server Error", JsonSerializer.Serialize(new Error("Unable to connect ot database")));
         }
     }
+
+    [EndPoint(HttpMethods.GET, "/tradings/:username")]
+    public HttpResponse GetUserTradingDeals(HttpRequest request)
+    {
+        try
+        {
+            // get username from resource
+            string username = request.Resource[1];
+
+            // create unit of work
+            using UnitOfWork unit = new(_connectionString, withTransaction: false);
+
+            // get user from token and check permission
+            if(unit.UserRepository.GetUser(request.GetToken()) is not User user ||
+               user.Username != username)
+               return new HttpResponse("401 Unauthorized", JsonSerializer.Serialize(new Error("Access token missing or invalid")));
+
+            // get trading deals
+            List<TradingDeal> deals = unit.TradingRepository.GetTradingDeals(user);
+
+            if(deals.Count == 0)
+                return new HttpResponse("204 No Content");
+
+            return new HttpResponse("200 OK", JsonSerializer.Serialize(deals));
+        }
+        catch(JsonException)
+        {
+            return new HttpResponse("400 Bad Request", JsonSerializer.Serialize(new Error("Invalid Body")));
+        }
+        catch(NpgsqlException)
+        {
+           return new HttpResponse("500 Internal Server Error", JsonSerializer.Serialize(new Error("Unable to connect ot database")));
+        }
+    }
 }
