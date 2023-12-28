@@ -17,3 +17,7 @@ DROP TABLE IF EXISTS cardtypes CASCADE;
 -- cards
 
 DROP TABLE IF EXISTS cards CASCADE;
+
+-- createdcards
+
+DROP TABLE IF EXISTS createdcards CASCADE;

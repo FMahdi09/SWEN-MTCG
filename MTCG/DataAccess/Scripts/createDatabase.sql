@@ -131,3 +131,12 @@ VALUES
         80,
         'Shadowball'
     );
+
+-- createdcards
+
+CREATE TABLE IF NOT EXISTS createdcards(
+    id SERIAL NOT NULL UNIQUE,
+    guid VARCHAR NOT NULL,
+    userid INT NOT NULL,
+    deck BOOL
+);
