@@ -139,7 +139,7 @@ CREATE TABLE IF NOT EXISTS createdcards(
     guid VARCHAR NOT NULL,
     userid INT NOT NULL,
     cardid INT NOT NULL,
-    deck BOOL,
+    deck BOOL DEFAULT false,
     -- constraints
     CONSTRAINT fkUserId
         FOREIGN KEY(userid)

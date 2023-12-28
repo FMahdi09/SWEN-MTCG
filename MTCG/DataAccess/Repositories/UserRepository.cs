@@ -111,5 +111,28 @@ public class UserRepository(IDbConnection connection) : BaseRepository(connectio
         using IDataReader reader = ExecuteQuery(command);
 
         return reader.Read();
+    }
+
+    public bool PayCurrency(User user, int amount)
+    {
+        // create command
+        using NpgsqlCommand command = new();
+        command.CommandText = "WITH rows AS ( " +
+                              "UPDATE users " +
+                              "SET currency = currency - @amount " +
+                              "WHERE id = @id AND currency >= @amount " +
+                              "RETURNING 1 " +
+                              ") " +
+                              "SELECT count(*) as count FROM rows";
+
+        // add parameters
+        command.AddParameterWithValue("amount", DbType.Int32, amount);
+        command.AddParameterWithValue("id", DbType.Int32, user.Id);
+
+        // execute command
+        using IDataReader reader = ExecuteQuery(command);
+        reader.Read();        
+
+        return (Int64)reader["count"] > 0;
     }   
 }
