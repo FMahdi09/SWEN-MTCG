@@ -43,4 +43,50 @@ public class DeckRepository(IDbConnection connection) : BaseRepository(connectio
 
         return toReturn;
     }
+
+    // UPDATE
+    public void ClearDeck(User user)
+    {
+        // create command
+        using NpgsqlCommand command = new();
+        command.CommandText = "UPDATE createdcards " +
+                              "SET deck = FALSE " +
+                              "WHERE userid = @userid";
+
+        // add parameters
+        command.AddParameterWithValue("userid", DbType.Int32, user.Id);
+
+        // execute command
+        ExecuteNonQuery(command);
+    }
+
+    public bool SetDeck(User user, List<string> cardGuids)
+    {
+        // create command
+        using NpgsqlCommand command = new();
+        command.CommandText = "WITH rows AS ( " +
+                              "UPDATE createdcards " +
+                              "SET deck = true " +
+                              "WHERE userid = @userid " +
+                              "AND guid = @guid " +
+                              "RETURNING 1 " +
+                              ") " +
+                              "SELECT count(*) as count FROM rows";
+
+        foreach(string guid in cardGuids)
+        {
+            // add parameters
+            command.AddParameterWithValue("userid", DbType.Int32, user.Id);
+            command.AddParameterWithValue("guid", DbType.String, guid);
+
+            // execute query
+            using IDataReader reader = ExecuteQuery(command);
+            command.Parameters.Clear();
+
+            if(!reader.Read() || (Int64)reader["count"] != 1)
+                return false;
+        }
+
+        return true;
+    }
 }
