@@ -46,6 +46,17 @@ internal class UnitOfWork : IDisposable
         }
     }
 
+    private DeckRepository? _deckRepository;
+
+    public DeckRepository DeckRepository
+    {
+        get
+        {
+            _deckRepository ??= new(_connection);
+            return _deckRepository;
+        }
+    }
+
     // constructor
     public UnitOfWork(string connectionString, bool withTransaction)
     {            
