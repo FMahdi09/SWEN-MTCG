@@ -152,7 +152,7 @@ public class CardRepository(IDbConnection connection) : BaseRepository(connectio
         return reader.Read();
     }
 
-    public void ChangeCardOwnership(User user, Card card)
+    public void ChangeCardOwnership(int userid, Card card)
     {
         // create command
         using NpgsqlCommand command = new();
@@ -161,7 +161,7 @@ public class CardRepository(IDbConnection connection) : BaseRepository(connectio
                               "WHERE guid = @guid";
 
         // add parameters
-        command.AddParameterWithValue("userid", DbType.Int32, user.Id);
+        command.AddParameterWithValue("userid", DbType.Int32, userid);
         command.AddParameterWithValue("guid", DbType.String, card.Guid);
 
         // execute command

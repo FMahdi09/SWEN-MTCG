@@ -163,7 +163,68 @@ public class TradingHandler(string connectionString)
                 return new HttpResponse("500 Internal Server Error", JsonSerializer.Serialize(new Error("Unable to delete deal")));
 
             // assign card back to user
-            unit.CardRepository.ChangeCardOwnership(user, deal.Card);
+            unit.CardRepository.ChangeCardOwnership(user.Id, deal.Card);
+
+            // commit work
+            unit.Commit();
+
+            return new HttpResponse("200 OK");
+        }
+        catch(JsonException)
+        {
+            return new HttpResponse("400 Bad Request", JsonSerializer.Serialize(new Error("Invalid Body")));
+        }
+        catch(NpgsqlException)
+        {
+           return new HttpResponse("500 Internal Server Error", JsonSerializer.Serialize(new Error("Unable to connect ot database")));
+        }
+    }
+
+    [EndPoint(HttpMethods.POST, "/tradings/:guid")]
+    public HttpResponse AcceptTradingDeal(HttpRequest request)
+    {
+        try
+        {
+            // get guid from resource
+            string dealGuid = request.Resource[1];
+
+            // deserialize body
+            string cardGuid = JsonSerializer.Deserialize<string>(request.Body)
+                ?? throw new JsonException();
+
+            // create unit of work
+            using UnitOfWork unit = new(_connectionString, withTransaction: true);
+
+            // get user from token and check permission
+            if(unit.UserRepository.GetUser(request.GetToken()) is not User user)
+                return new HttpResponse("401 Unauthorized", JsonSerializer.Serialize(new Error("Access token is missing or invalid")));
+
+            // get deal from guid
+            if(unit.TradingRepository.GetTradingDeal(dealGuid) is not TradingDeal deal)
+                return new HttpResponse("404 Not Found", JsonSerializer.Serialize(new Error("Deal not found")));
+
+            // get card from guid
+            if(unit.CardRepository.GetCardFromGuid(cardGuid) is not Card card)
+                return new HttpResponse("403 Forbidden", JsonSerializer.Serialize(new Error("Invalid card provided")));
+
+            // check trade deal requirements
+            if(card.Type != deal.CardType ||
+               card.Damage < deal.MinDamage)
+               return new HttpResponse("403 Forbidden", JsonSerializer.Serialize(new Error("Card does not match requirements")));
+
+            // unassign card from user (also checks for ownership and deck)
+            if(!unit.CardRepository.RemoveCardOwnership(user, card))
+                return new HttpResponse("403 Forbidden", JsonSerializer.Serialize(new Error("Invalid card provided")));
+
+            // delete trading deal
+            if(!unit.TradingRepository.DeleteTradingDeal(deal))
+                return new HttpResponse("500 Internal Server Error", JsonSerializer.Serialize(new Error("Unable to accept deal")));
+
+            // perform trade:
+
+            // reassign cards
+            unit.CardRepository.ChangeCardOwnership(user.Id, deal.Card);
+            unit.CardRepository.ChangeCardOwnership(deal.UserId, card);
 
             // commit work
             unit.Commit();
