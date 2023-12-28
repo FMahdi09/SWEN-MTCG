@@ -34,4 +34,35 @@ public class ScoreRepository(IDbConnection connection) : BaseRepository(connecti
         }
         return null;
     }
+
+    public List<UserStats> GetScoreboard(int limit)
+    {
+        // create command
+        using NpgsqlCommand command = new();
+        command.CommandText = "SELECT username, score, wins, losses " +
+                              "FROM users " +
+                              "ORDER BY  score DESC " +
+                              "LIMIT @limit";
+
+        // add parameters
+        command.AddParameterWithValue("limit", DbType.Int32, limit);
+
+        // execute command
+        using IDataReader reader = ExecuteQuery(command);
+
+        List<UserStats> scoreboard = [];
+
+        while(reader.Read())
+        {
+            UserStats stats = new(
+                name: (string)reader["username"],
+                score: (int)reader["score"],
+                wins: (int)reader["wins"],
+                losses: (int)reader["losses"] 
+            );
+            scoreboard.Add(stats);
+        }
+
+        return scoreboard;
+    }
 }
