@@ -134,4 +134,49 @@ public class TradingHandler(string connectionString)
            return new HttpResponse("500 Internal Server Error", JsonSerializer.Serialize(new Error("Unable to connect ot database")));
         }
     }
+
+    [EndPoint(HttpMethods.DELETE, "/tradings/:guid")]
+    public HttpResponse DeleteTradingDeal(HttpRequest request)
+    {
+        try
+        {
+            // get guid from resource
+            string guid = request.Resource[1];
+
+            // create unit of work
+            using UnitOfWork unit = new(_connectionString, withTransaction: true);
+
+            // get user from token and check permissions
+            if(unit.UserRepository.GetUser(request.GetToken()) is not User user)
+                return new HttpResponse("401 Unauthorized", JsonSerializer.Serialize(new Error("Access token missing or invalid")));
+
+            // get deal from guid
+            if(unit.TradingRepository.GetTradingDeal(guid) is not TradingDeal deal)
+                return new HttpResponse("404 Not Found");
+
+            // check if deal belongs to user
+            if(deal.UserId != user.Id)
+                return new HttpResponse("403 Forbidden");
+
+            // delete deal
+            if(!unit.TradingRepository.DeleteTradingDeal(deal))
+                return new HttpResponse("500 Internal Server Error", JsonSerializer.Serialize(new Error("Unable to delete deal")));
+
+            // assign card back to user
+            unit.CardRepository.ChangeCardOwnership(user, deal.Card);
+
+            // commit work
+            unit.Commit();
+
+            return new HttpResponse("200 OK");
+        }
+        catch(JsonException)
+        {
+            return new HttpResponse("400 Bad Request", JsonSerializer.Serialize(new Error("Invalid Body")));
+        }
+        catch(NpgsqlException)
+        {
+           return new HttpResponse("500 Internal Server Error", JsonSerializer.Serialize(new Error("Unable to connect ot database")));
+        }
+    }
 }

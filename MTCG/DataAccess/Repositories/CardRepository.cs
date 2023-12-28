@@ -151,4 +151,20 @@ public class CardRepository(IDbConnection connection) : BaseRepository(connectio
 
         return reader.Read();
     }
+
+    public void ChangeCardOwnership(User user, Card card)
+    {
+        // create command
+        using NpgsqlCommand command = new();
+        command.CommandText = "UPDATE createdcards " +
+                              "SET userid = @userid " +
+                              "WHERE guid = @guid";
+
+        // add parameters
+        command.AddParameterWithValue("userid", DbType.Int32, user.Id);
+        command.AddParameterWithValue("guid", DbType.String, card.Guid);
+
+        // execute command
+        ExecuteNonQuery(command);
+    }
 }

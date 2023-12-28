@@ -99,4 +99,64 @@ public class TradingRepository(IDbConnection connection) : BaseRepository(connec
 
         return deals;
     }
+
+    public TradingDeal? GetTradingDeal(string guid)
+    {
+        // create command
+        using NpgsqlCommand command = new();
+        command.CommandText = "SELECT td.guid as dealguid, td.userid as dealuser, td.mindamage, tdeal.name as dealcardtype, cc.guid as cardguid, c.name as cardname, c.damage as carddamage, c.id as cardid, e.name as elementname, tcard.name as cardcardtype " +
+                                "FROM tradingdeals td " +
+                                "JOIN createdcards cc ON td.cardid = cc.id " +
+                                "JOIN cards c ON cc.cardid = c.id " +
+                                "JOIN elements e ON c.elementid = e.id " +
+                                "JOIN cardtypes tcard ON c.cardtypeid = tcard.id " +
+                                "JOIN cardtypes tdeal ON td.cardtypeid = tdeal.id " +
+                                "WHERE td.guid = @guid";
+
+        // add parameters
+        command.AddParameterWithValue("guid", DbType.String, guid);
+
+        // execute command
+        using IDataReader reader = ExecuteQuery(command);
+
+        if(reader.Read())
+        {
+            Card card = new(
+                id: (int)reader["cardid"],
+                guid: (string)reader["cardguid"],
+                name: (string)reader["cardname"],
+                damage: (int)reader["carddamage"],
+                element: (string)reader["elementname"],
+                type: (string)reader["cardcardtype"]
+            );
+
+            return new TradingDeal(
+                tradeId: (string)reader["dealguid"],
+                userId: (int)reader["dealuser"],
+                card: card,
+                minDamage: (int)reader["mindamage"],
+                cardType: (string)reader["dealcardtype"]
+            );
+        }
+
+        return null;
+    }
+
+    // DELETE
+    public bool DeleteTradingDeal(TradingDeal deal)
+    {
+        // create command
+        using NpgsqlCommand command = new();
+        command.CommandText = "DELETE FROM tradingdeals " +
+                              "WHERE guid = @guid " +
+                              "RETURNING 1";
+
+        // add parameters
+        command.AddParameterWithValue("guid", DbType.String, deal.TradeId);
+
+        // execute command
+        using IDataReader reader = ExecuteQuery(command);
+
+        return reader.Read();
+    }
 }
