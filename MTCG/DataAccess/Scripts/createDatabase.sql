@@ -6,7 +6,10 @@ CREATE TABLE IF NOT EXISTS users(
     password VARCHAR NOT NULL,
     bio VARCHAR NOT NULL,
     image VARCHAR NOT NULL,
-    currency INT NOT NULL DEFAULT 20
+    currency INT NOT NULL DEFAULT 20,
+    score INT NOT NULL DEFAULT 100,
+    wins INT NOT NULL DEFAULT 0,
+    losses INT NOT NULL DEFAULT 0
 );
 
 -- tokens

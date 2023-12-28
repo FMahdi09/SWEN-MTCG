@@ -57,6 +57,16 @@ internal class UnitOfWork : IDisposable
         }
     }
 
+    public ScoreRepository? _scoreRepository;
+
+    public ScoreRepository ScoreRepository
+    {
+        get
+        {
+            _scoreRepository ??= new(_connection);
+            return _scoreRepository;
+        }
+    }
     // constructor
     public UnitOfWork(string connectionString, bool withTransaction)
     {            
