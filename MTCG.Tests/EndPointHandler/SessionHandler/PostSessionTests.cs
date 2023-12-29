@@ -4,65 +4,32 @@ using SWEN.DbInitializer;
 using SWEN.HttpServer;
 using SWEN.HttpServer.Enums;
 using SWEN.MTCG.BusinessLogic.EndpointHandlers;
-using SWEN.MTCG.Models.DataModels;
 using SWEN.MTCG.Models.SerializationObjects;
 
-namespace SWEN.MTCG.Tests.EndpointHandler.Users;
+namespace SWEN.MTCG.Tests.EndPointHandler.Session;
 
 [TestFixture]
-public class PostUserTests
+public class PostSessionTests
 {
-    private UserHandler _userHandler;
+    private SessionHandler _sessionHandler;
 
     [SetUp]
     public void SetUp()
     {
         // initialize handler
-        _userHandler = new("Host=localhost;Username=postgres;Password=postgres;Database=testdb");
+        _sessionHandler = new("Host=localhost;Username=postgres;Password=postgres;Database=testdb");
 
         // initialize database
         DbConfig config = new(
             connectionString: "Host=localhost;Username=postgres;Password=postgres;Database=testdb",
-            fillScript: @"C:\Users\fabia\Documents\Technikum\SWEN\Semesterprojekt\MTCG\DataAccess\Scripts\fillDatabase.sql",
+            fillScript: @"C:\Users\fabia\Documents\Technikum\SWEN\Semesterprojekt\MTCG.Tests\Scripts\fillDatabasePostSession.sql",
             createScript: @"C:\Users\fabia\Documents\Technikum\SWEN\Semesterprojekt\MTCG\DataAccess\Scripts\createDatabase.sql",
             dropScript: @"C:\Users\fabia\Documents\Technikum\SWEN\Semesterprojekt\MTCG\DataAccess\Scripts\dropDatabase.sql"
         );
 
         DBInitializer initializer = new(config);
         initializer.InitDB();
-    }
-
-    [Test]
-    public void Successfull()
-    {
-        // arrange
-
-        // body
-        UserCredentials userCredentials = new()
-        {
-            Username = "Alice",
-            Password = "password"
-        };
-
-        string body = JsonSerializer.Serialize(userCredentials);
-
-        // headers
-        Dictionary<string, string> headers = new()
-        {
-            {"Content-Length", body.Length.ToString()}
-        };
-
-        // resource
-        string[] resource = ["users"];
-
-        HttpRequest request = new(HttpMethods.GET, resource, body, headers);
-
-        // act
-        HttpResponse response = _userHandler.PostUser(request);
-
-        // assert
-        Debug.Assert(response.Status == "201 Created", "POST /users failed with correct credentials");
-    }
+   }
 
     [Test]
     public void InvalidBody()
@@ -79,30 +46,30 @@ public class PostUserTests
         };
 
         // resource
-        string[] resource = ["users"];
+        string[] resource = ["session"];
 
         HttpRequest request = new(HttpMethods.GET, resource, body, headers);
 
         // act
-        HttpResponse response = _userHandler.PostUser(request);
+        HttpResponse response = _sessionHandler.PostSession(request);
 
         // assert
-        Debug.Assert(response.Status == "400 Bad Request", "POST /users failed with invalid body");
+        Debug.Assert(response.Status == "400 Bad Request", "POST /session failed with invalid body");
     }
 
     [Test]
-    public void UsernameExists()
+    public void InvalidCredentials()
     {
-        // arrange
+        // arrange 
 
         // body
-        UserCredentials userCredentials = new()
+        UserCredentials credentials = new()
         {
-            Username = "Bob",
-            Password = "password"
+            Username = "Alice",
+            Password = "wrong password"
         };
 
-        string body = JsonSerializer.Serialize(userCredentials);
+        string body = JsonSerializer.Serialize(credentials);
 
         // headers
         Dictionary<string, string> headers = new()
@@ -111,16 +78,46 @@ public class PostUserTests
         };
 
         // resource
-        string[] resource = ["users"];
+        string[] resource = ["session"];
 
         HttpRequest request = new(HttpMethods.GET, resource, body, headers);
 
         // act
-        HttpResponse successfullResponse = _userHandler.PostUser(request);
-        HttpResponse unsuccessfullResponse = _userHandler.PostUser(request);
+        HttpResponse response = _sessionHandler.PostSession(request);
 
         // assert
-        Debug.Assert(successfullResponse.Status == "201 Created", "POST /users failed with correct credentials");
-        Debug.Assert(unsuccessfullResponse.Status == "409 Conflict", "POST /users created user with duplicate credentials");
+        Debug.Assert(response.Status == "401 Unauthorized", "POST /session failed with invalid credentials");
+    }
+
+    [Test]
+    public void Successfull()
+    {
+        // arrange 
+
+        // body
+        UserCredentials credentials = new()
+        {
+            Username = "Alice",
+            Password = "password"
+        };
+
+        string body = JsonSerializer.Serialize(credentials);
+
+        // headers
+        Dictionary<string, string> headers = new()
+        {
+            {"Content-Length", body.Length.ToString()}
+        };
+
+        // resource
+        string[] resource = ["session"];
+
+        HttpRequest request = new(HttpMethods.GET, resource, body, headers);
+
+        // act
+        HttpResponse response = _sessionHandler.PostSession(request);
+
+        // assert
+        Debug.Assert(response.Status == "200 OK", "POST /session failed with valid credentials");
     }
 }

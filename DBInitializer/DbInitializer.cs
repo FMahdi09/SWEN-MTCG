@@ -8,10 +8,11 @@ public class DBInitializer(DbConfig config)
 
     public void InitDB()
     {
-        if(_config.DropDb)
-            DropDatabase();
+        DropDatabase();
 
         CreateDatabase();
+
+        FillDatabase();
     }
 
     private void CreateDatabase()
@@ -40,6 +41,24 @@ public class DBInitializer(DbConfig config)
             connection.Open();
 
             string script = File.ReadAllText(_config.DropScript); 
+
+            NpgsqlCommand command = new(script, connection);
+            command.ExecuteNonQuery();
+        }
+        catch(NpgsqlException ex)
+        {
+            Console.Error.WriteLine($"Failed to connect to database: { ex.Message }");
+        }
+    }
+
+    private void FillDatabase()
+    {
+        try
+        {
+            NpgsqlConnection connection = new(_config.ConnectionString);
+            connection.Open();
+
+            string script = File.ReadAllText(_config.FillScript); 
 
             NpgsqlCommand command = new(script, connection);
             command.ExecuteNonQuery();

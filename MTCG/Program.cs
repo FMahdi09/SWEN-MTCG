@@ -6,7 +6,7 @@ using SWEN.MTCG.Businesslogic;
 // initialize database
 DbConfig config = new(
     connectionString: "Host=localhost;Username=postgres;Password=postgres;Database=mydb",
-    dropDb: true,
+    fillScript: @"C:\Users\fabia\Documents\Technikum\SWEN\Semesterprojekt\MTCG\DataAccess\Scripts\fillDatabase.sql",
     createScript: @"C:\Users\fabia\Documents\Technikum\SWEN\Semesterprojekt\MTCG\DataAccess\Scripts\createDatabase.sql",
     dropScript: @"C:\Users\fabia\Documents\Technikum\SWEN\Semesterprojekt\MTCG\DataAccess\Scripts\dropDatabase.sql"
 );
