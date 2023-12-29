@@ -2,13 +2,12 @@ using SWEN.MTCG.Models.DataModels;
 
 namespace SWEN.MTCG.Models.Base;
 
-public abstract class BattleAble
+public abstract class BattleAble(string username)
 {
+    public string Username { get; set; } = username;
     private readonly EventWaitHandle _ewh = new(false, EventResetMode.AutoReset);
     private readonly Random _rng = new();
-
     private List<Card> _deck = [];
-
     private string _log = "";
 
     public string BattleLog
@@ -21,9 +20,21 @@ public abstract class BattleAble
         }
     }
 
-    public Card DrawRandomCard()
+    public Card? DrawRandomCard()
     {
-        return _deck[_rng.Next(_deck.Count)];
+        if(_deck.Count == 0)
+            return null;
+
+        Card card = _deck[_rng.Next(_deck.Count)];
+
+        _deck.Remove(card);
+
+        return card;
+    }
+
+    public void InsertCard(Card card)
+    {
+        _deck.Add(card);
     }
 
     public bool SetDeck(List<Card> deck)
