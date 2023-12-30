@@ -2,6 +2,7 @@ using System.Data;
 using Npgsql;
 using SWEN.MTCG.DataAccess.Base;
 using SWEN.MTCG.Models.DataModels;
+using SWEN.MTCG.Models.Enums;
 
 namespace SWEN.MTCG.DataAccess.Repositories;
 
@@ -77,13 +78,20 @@ public class TradingRepository(IDbConnection connection) : BaseRepository(connec
 
         while(reader.Read())
         {
+            // create card
+
+            // if type or element can not be parsed skip card
+            if(!Enum.TryParse((string)reader["cardcardtype"], out Cardtype type) ||
+               !Enum.TryParse((string)reader["dealcardtype"], out Cardtype dealType))
+                continue;
+
             Card card = new(
                 id: (int)reader["cardid"],
                 guid: (string)reader["cardguid"],
                 name: (string)reader["cardname"],
                 damage: (int)reader["carddamage"],
                 element: (string)reader["elementname"],
-                type: (string)reader["cardcardtype"]
+                type: type
             );
 
             TradingDeal deal = new(
@@ -91,7 +99,7 @@ public class TradingRepository(IDbConnection connection) : BaseRepository(connec
                 userId: (int)reader["dealuser"],
                 card: card,
                 minDamage: (int)reader["mindamage"],
-                cardType: (string)reader["dealcardtype"]
+                cardType: dealType
             );
 
             deals.Add(deal);
@@ -121,13 +129,20 @@ public class TradingRepository(IDbConnection connection) : BaseRepository(connec
 
         if(reader.Read())
         {
+            // create card
+
+            // if type or element can not be parsed skip card
+            if(!Enum.TryParse((string)reader["cardcardtype"], out Cardtype type) ||
+               !Enum.TryParse((string)reader["dealcardtype"], out Cardtype dealType))
+                return null;
+
             Card card = new(
                 id: (int)reader["cardid"],
                 guid: (string)reader["cardguid"],
                 name: (string)reader["cardname"],
                 damage: (int)reader["carddamage"],
                 element: (string)reader["elementname"],
-                type: (string)reader["cardcardtype"]
+                type: type
             );
 
             return new TradingDeal(
@@ -135,7 +150,7 @@ public class TradingRepository(IDbConnection connection) : BaseRepository(connec
                 userId: (int)reader["dealuser"],
                 card: card,
                 minDamage: (int)reader["mindamage"],
-                cardType: (string)reader["dealcardtype"]
+                cardType: dealType
             );
         }
 

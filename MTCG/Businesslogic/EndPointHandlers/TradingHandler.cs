@@ -5,6 +5,7 @@ using SWEN.HttpServer.Enums;
 using SWEN.MTCG.BusinessLogic.Attributes;
 using SWEN.MTCG.DataAccess.UnitOfWork;
 using SWEN.MTCG.Models.DataModels;
+using SWEN.MTCG.Models.Enums;
 using SWEN.MTCG.Models.SerializationObjects;
 
 namespace SWEN.MTCG.BusinessLogic.EndpointHandlers;
@@ -45,12 +46,15 @@ public class TradingHandler(string connectionString)
                 return new HttpResponse("403 Forbidden", JsonSerializer.Serialize(new Error("Invalid card provided")));
 
             // create trading deal
+            if(Enum.TryParse(offer.CardType, out Cardtype type))
+                return new HttpResponse("403 Forbidden", JsonSerializer.Serialize(new Error("Invalid card type provided")));
+
             TradingDeal deal = new(
                 tradeId: Guid.NewGuid().ToString(),
                 userId: user.Id,
                 card: card,
                 minDamage: offer.MinDamage.GetValueOrDefault(),
-                cardType: offer.CardType
+                cardType: type
             );
 
             if(!unit.TradingRepository.CreateTradingDeal(user, deal))

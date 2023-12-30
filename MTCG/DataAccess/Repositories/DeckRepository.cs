@@ -2,6 +2,7 @@ using System.Data;
 using Npgsql;
 using SWEN.MTCG.DataAccess.Base;
 using SWEN.MTCG.Models.DataModels;
+using SWEN.MTCG.Models.Enums;
 
 namespace SWEN.MTCG.DataAccess.Repositories;
 
@@ -30,13 +31,19 @@ public class DeckRepository(IDbConnection connection) : BaseRepository(connectio
 
         while(reader.Read())
         {
+            // create card
+
+            // if type or element can not be parsed skip card
+            if(!Enum.TryParse((string)reader["typename"], out Cardtype type))
+                continue;
+
             Card card = new(
                 (int)reader["id"],
                 (string)reader["guid"],
                 (string)reader["cardname"],
                 (int)reader["damage"],
                 (string)reader["elementname"],
-                (string)reader["typename"]
+                type
             );
             toReturn.Add(card);
         }
