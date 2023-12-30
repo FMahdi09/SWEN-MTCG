@@ -11,6 +11,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DBInitializer", "DBInitiali
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MTCG.Tests", "MTCG.Tests\MTCG.Tests.csproj", "{156AD7D9-7204-4782-AEF2-531FE466224E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HttpClient", "HttpClient\HttpClient.csproj", "{F5781CB5-DB88-4259-B8CE-92CA6FFF539F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MTCG.Integration", "MTCG.Integration\MTCG.Integration.csproj", "{65ECADB7-3904-465E-A1EE-E91328F6FB3E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +37,14 @@ Global
 		{156AD7D9-7204-4782-AEF2-531FE466224E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{156AD7D9-7204-4782-AEF2-531FE466224E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{156AD7D9-7204-4782-AEF2-531FE466224E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F5781CB5-DB88-4259-B8CE-92CA6FFF539F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F5781CB5-DB88-4259-B8CE-92CA6FFF539F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F5781CB5-DB88-4259-B8CE-92CA6FFF539F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F5781CB5-DB88-4259-B8CE-92CA6FFF539F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{65ECADB7-3904-465E-A1EE-E91328F6FB3E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{65ECADB7-3904-465E-A1EE-E91328F6FB3E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{65ECADB7-3904-465E-A1EE-E91328F6FB3E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{65ECADB7-3904-465E-A1EE-E91328F6FB3E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

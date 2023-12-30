@@ -36,7 +36,7 @@ public class HttpServer(IPAddress iPAddress, int port, ILogic logic)
     private void HandleClient(TcpClient client)
     {
         using StreamReader reader = new(client.GetStream());
-        using StreamWriter writer = new(client.GetStream());
+        using StreamWriter writer = new(client.GetStream()) {AutoFlush = true};
 
         try
         {

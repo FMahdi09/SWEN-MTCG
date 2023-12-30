@@ -1,3 +1,4 @@
+using System.Text;
 using SWEN.HttpServer.Enums;
 
 namespace SWEN.HttpServer;
@@ -57,5 +58,60 @@ public class HttpRequest
             return string.Empty;
 
         return value;
+    }
+    
+    /// <summary>
+    /// gets the valid request as a string 
+    /// </summary>
+    /// <returns> request as a valid HTTP string </returns>
+    public override string ToString()
+    {
+        StringBuilder builder = new();
+
+        // request line
+        switch(Method)
+        {
+            case HttpMethods.GET:
+                builder.Append("GET ");
+                break;
+            case HttpMethods.POST:
+                builder.Append("POST ");
+                break;
+            case HttpMethods.PUT:
+                builder.Append("PUT ");
+                break;
+            case HttpMethods.DELETE:
+                builder.Append("DELETE ");
+                break;
+        }
+
+        foreach(string element in Resource)
+        {
+            builder.Append($"/{ element }");
+        }
+
+        builder.Append(" HTTP/1.1");
+        builder.AppendLine();
+
+        // headers
+
+        if(Body != String.Empty)
+        {
+            builder.AppendLine("Content-Type: application/json");
+            builder.AppendLine($"Content-Length: {Body.Length}");
+
+        }
+
+        builder.AppendLine();
+
+        // body
+
+        if(Body != String.Empty)
+        {
+            builder.AppendLine(Body);
+            builder.AppendLine();
+        }
+
+        return builder.ToString();
     }
 }

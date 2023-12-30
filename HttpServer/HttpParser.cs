@@ -83,4 +83,57 @@ public static class HttpParser
 
         return new HttpRequest(method, resource, headers);
     }
+
+
+    /// <summary>
+    /// generates a HttpResponse object from a stream containing a HTTP response
+    /// </summary>
+    /// <param name="reader"> reader from which the request can be read </param>
+    /// <returns> HttpRequest object </returns>
+    /// <exception cref="EndOfStreamException"> if the end of the input stream is reached unexpectedly </exception>
+    /// <exception cref="HttpRequestException"> if the HTTP request is invalid </exception>
+    public static HttpResponse ParseResponse(StreamReader reader)
+    {
+        string? curLine;
+        string status;
+        int contentLength = 0;
+
+        // status line
+        if((curLine = reader.ReadLine()) is null)
+            throw new EndOfStreamException("Client closed connection");
+
+        status = curLine.Replace("HTTP/1.1 ", "");
+
+        // headers
+        while ((curLine = reader.ReadLine()) is not null)
+        {
+            if(curLine is "")
+                break;
+
+            // validate header
+            string[] curHeader = curLine.Split(':');
+
+            if(curHeader.Length < 2)
+                throw new HttpRequestException("Invalid HTTP header");
+
+            // content length
+            if(curHeader[0].Contains("Content-Length"))
+            {
+                if(!int.TryParse(curHeader[1].Trim(), out contentLength))
+                    throw new HttpRequestException("Invalid content length");
+            }
+        }
+
+        // body
+        if(contentLength > 0)
+        {
+            char[] buffer = new char[contentLength];
+            reader.Read(buffer, 0, contentLength);
+            string body = new(buffer);
+
+            return new HttpResponse(status, body);
+        }
+
+        return new HttpResponse(status);
+    }
 }
