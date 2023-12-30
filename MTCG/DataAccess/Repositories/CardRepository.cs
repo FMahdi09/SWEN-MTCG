@@ -1,4 +1,5 @@
 using System.Data;
+using System.Linq.Expressions;
 using Npgsql;
 using SWEN.MTCG.DataAccess.Base;
 using SWEN.MTCG.Models.DataModels;
@@ -32,7 +33,8 @@ public class CardRepository(IDbConnection connection) : BaseRepository(connectio
             // create card
 
             // if type or element can not be parsed skip card
-            if(!Enum.TryParse((string)reader["typename"], out Cardtype type))
+            if(!Enum.TryParse((string)reader["typename"], out Cardtype type) ||
+               !Enum.TryParse((string)reader["elementname"], out CardElement element))
                 continue;
 
             Card card = new(
@@ -40,7 +42,7 @@ public class CardRepository(IDbConnection connection) : BaseRepository(connectio
                 guid: Guid.NewGuid().ToString(),
                 (string)reader["cardname"],
                 (int)reader["damage"],
-                (string)reader["elementname"],
+                element,
                 type
             );
             toReturn.Add(card);
@@ -93,7 +95,8 @@ public class CardRepository(IDbConnection connection) : BaseRepository(connectio
             // create card
 
             // if type or element can not be parsed skip card
-            if(!Enum.TryParse((string)reader["typename"], out Cardtype type))
+            if(!Enum.TryParse((string)reader["typename"], out Cardtype type) ||
+               !Enum.TryParse((string)reader["elementname"], out CardElement element))
                 continue;
 
             Card card = new(
@@ -101,7 +104,7 @@ public class CardRepository(IDbConnection connection) : BaseRepository(connectio
                 (string)reader["guid"],
                 (string)reader["cardname"],
                 (int)reader["damage"],
-                (string)reader["elementname"],
+                element,
                 type
             );
             toReturn.Add(card);
@@ -132,7 +135,8 @@ public class CardRepository(IDbConnection connection) : BaseRepository(connectio
             // create card
 
             // if type or element can not be parsed skip card
-            if(!Enum.TryParse((string)reader["typename"], out Cardtype type))
+            if(!Enum.TryParse((string)reader["typename"], out Cardtype type) ||
+               !Enum.TryParse((string)reader["elementname"], out CardElement element))
                 return null;
 
             return new Card(
@@ -140,7 +144,7 @@ public class CardRepository(IDbConnection connection) : BaseRepository(connectio
                 (string)reader["guid"],
                 (string)reader["cardname"],
                 (int)reader["damage"],
-                (string)reader["elementname"],
+                element,
                 type
             );
         }

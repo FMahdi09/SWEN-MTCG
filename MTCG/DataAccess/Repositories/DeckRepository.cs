@@ -34,7 +34,8 @@ public class DeckRepository(IDbConnection connection) : BaseRepository(connectio
             // create card
 
             // if type or element can not be parsed skip card
-            if(!Enum.TryParse((string)reader["typename"], out Cardtype type))
+            if(!Enum.TryParse((string)reader["typename"], out Cardtype type) ||
+               !Enum.TryParse((string)reader["elementname"], out CardElement element))
                 continue;
 
             Card card = new(
@@ -42,7 +43,7 @@ public class DeckRepository(IDbConnection connection) : BaseRepository(connectio
                 (string)reader["guid"],
                 (string)reader["cardname"],
                 (int)reader["damage"],
-                (string)reader["elementname"],
+                element,
                 type
             );
             toReturn.Add(card);

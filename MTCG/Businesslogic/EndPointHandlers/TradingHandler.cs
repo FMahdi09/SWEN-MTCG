@@ -46,7 +46,7 @@ public class TradingHandler(string connectionString)
                 return new HttpResponse("403 Forbidden", JsonSerializer.Serialize(new Error("Invalid card provided")));
 
             // create trading deal
-            if(Enum.TryParse(offer.CardType, out Cardtype type))
+            if(!Enum.TryParse(offer.CardType, out Cardtype type))
                 return new HttpResponse("403 Forbidden", JsonSerializer.Serialize(new Error("Invalid card type provided")));
 
             TradingDeal deal = new(

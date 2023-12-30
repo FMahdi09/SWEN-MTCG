@@ -82,7 +82,8 @@ public class TradingRepository(IDbConnection connection) : BaseRepository(connec
 
             // if type or element can not be parsed skip card
             if(!Enum.TryParse((string)reader["cardcardtype"], out Cardtype type) ||
-               !Enum.TryParse((string)reader["dealcardtype"], out Cardtype dealType))
+               !Enum.TryParse((string)reader["dealcardtype"], out Cardtype dealType) ||
+               !Enum.TryParse((string)reader["elementname"], out CardElement element))
                 continue;
 
             Card card = new(
@@ -90,7 +91,7 @@ public class TradingRepository(IDbConnection connection) : BaseRepository(connec
                 guid: (string)reader["cardguid"],
                 name: (string)reader["cardname"],
                 damage: (int)reader["carddamage"],
-                element: (string)reader["elementname"],
+                element: element,
                 type: type
             );
 
@@ -133,7 +134,8 @@ public class TradingRepository(IDbConnection connection) : BaseRepository(connec
 
             // if type or element can not be parsed skip card
             if(!Enum.TryParse((string)reader["cardcardtype"], out Cardtype type) ||
-               !Enum.TryParse((string)reader["dealcardtype"], out Cardtype dealType))
+               !Enum.TryParse((string)reader["dealcardtype"], out Cardtype dealType) ||
+               !Enum.TryParse((string)reader["elementname"], out CardElement element))
                 return null;
 
             Card card = new(
@@ -141,7 +143,7 @@ public class TradingRepository(IDbConnection connection) : BaseRepository(connec
                 guid: (string)reader["cardguid"],
                 name: (string)reader["cardname"],
                 damage: (int)reader["carddamage"],
-                element: (string)reader["elementname"],
+                element: element,
                 type: type
             );
 
