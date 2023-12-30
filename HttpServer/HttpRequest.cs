@@ -11,17 +11,17 @@ public class HttpRequest
     /// <summary>
     /// requested method
     /// </summary>
-    public HttpMethods Method { get; }
+    public HttpMethods Method { get; set; }
 
     /// <summary>
     /// requested resource as a string array
     /// </summary>
-    public string[] Resource { get; }
+    public string[] Resource { get; set; }
 
     /// <summary>
     /// provided body as string. string.Empty in case of no body
     /// </summary>
-    public string Body { get; }
+    public string Body { get; set;}
 
     /// <summary>
     /// dictionary containing all provided headers
@@ -99,7 +99,11 @@ public class HttpRequest
         {
             builder.AppendLine("Content-Type: application/json");
             builder.AppendLine($"Content-Length: {Body.Length}");
+        }
 
+        foreach(var header in Headers)
+        {
+            builder.AppendLine($"{header.Key}: {header.Value}");
         }
 
         builder.AppendLine();

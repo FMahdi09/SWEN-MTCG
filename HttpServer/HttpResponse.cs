@@ -10,12 +10,12 @@ public class HttpResponse
     /// <summary>
     /// response statuscode + message
     /// </summary>
-    public string Status { get; }
+    public string Status { get; set; }
     
     /// <summary>
     /// resonse body. string.Empty if no body
     /// </summary>
-    public string Body { get; }
+    public string Body { get; set; }
 
     /// <summary>
     /// instantiates a response with body
