@@ -33,7 +33,7 @@ public class TradingRepository(IDbConnection connection) : BaseRepository(connec
         command.AddParameterWithValue("userid", DbType.Int32, user.Id);
         command.AddParameterWithValue("cardguid", DbType.String, deal.Card.Guid);
         command.AddParameterWithValue("minDamage", DbType.Int32, deal.MinDamage);
-        command.AddParameterWithValue("cardtype", DbType.String, deal.CardType);
+        command.AddParameterWithValue("cardtype", DbType.String, deal.CardType.ToString());
 
         // execute command
         using IDataReader reader = ExecuteQuery(command);

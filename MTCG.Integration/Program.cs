@@ -1,10 +1,12 @@
-﻿using System.Net;
+﻿using System.Linq.Expressions;
+using System.Net;
 using System.Net.Sockets;
 using System.Text.Json;
 using SWEN.HttpSender;
 using SWEN.HttpServer;
 using SWEN.HttpServer.Enums;
 using SWEN.MTCG.Integration;
+using SWEN.MTCG.Models.DataModels;
 using SWEN.MTCG.Models.SerializationObjects;
 
 HttpSender client = new(IPAddress.Loopback, 12345);
@@ -346,7 +348,9 @@ request = new(
     }
 );
 
-PrintResult("GET /cards", "Successful: Alice", request, clearScreen, client);
+response = PrintResult("GET /cards", "Successful: Alice", request, clearScreen, client);
+
+List<CardCode> aliceCards = JsonSerializer.Deserialize<List<CardCode>>(response.Body) ?? []; 
 
 // success bob
 request = new(
@@ -358,7 +362,9 @@ request = new(
     }
 );
 
-PrintResult("GET /cards", "Successful: Bob", request, clearScreen, client);
+response = PrintResult("GET /cards", "Successful: Bob", request, clearScreen, client);
+
+List<CardCode> bobCards = JsonSerializer.Deserialize<List<CardCode>>(response.Body) ?? []; 
 
 // GET /deck empty
 
@@ -387,3 +393,374 @@ request = new(
 PrintResult("GET /deck", "Successful: Bob empty deck", request, clearScreen, client);
 
 // PUT /deck
+
+// failure not enough cards
+
+List<string> cards = [];
+
+for(int i = 0; i < 3; ++i)
+{
+    cards.Add(aliceCards[i].Guid ?? "");
+}
+
+body = JsonSerializer.Serialize(cards);
+
+request = new(
+    HttpMethods.PUT,
+    ["deck"],
+    body,
+    new()
+    {
+        {"Authorization", aliceAuth}
+    }
+);
+
+PrintResult("PUT /deck", "Failure: invalid number of cards provided", request, clearScreen, client);
+
+// invalid card tokens provided
+
+cards = [
+    "invalid token 1",
+    "invalid token 2",
+    "invalid token 3",
+    "invalid token 4"
+];
+
+body = JsonSerializer.Serialize(cards);
+
+request = new(
+    HttpMethods.PUT,
+    ["deck"],
+    body,
+    new()
+    {
+        {"Authorization", aliceAuth}
+    }
+);
+
+PrintResult("PUT /deck", "Failure: invalid card tokens provided", request, clearScreen, client);
+
+// failure alice tries to access bob cards
+
+cards.Clear();
+
+for(int i = 0; i < 4; ++i)
+{
+    cards.Add(bobCards[i].Guid ?? "");
+}
+
+body = JsonSerializer.Serialize(cards);
+
+request = new(
+    HttpMethods.PUT,
+    ["deck"],
+    body,
+    new()
+    {
+        {"Authorization", aliceAuth}
+    }
+);
+
+PrintResult("PUT /deck", "Failure: Alice tries to access Bob cards", request, clearScreen, client);
+
+// success alice
+
+cards.Clear();
+
+for(int i = 0; i < 4; ++i)
+{
+    cards.Add(aliceCards[i].Guid ?? "");
+}
+
+body = JsonSerializer.Serialize(cards);
+
+request = new(
+    HttpMethods.PUT,
+    ["deck"],
+    body,
+    new()
+    {
+        {"Authorization", aliceAuth}
+    }
+);
+
+PrintResult("PUT /deck", "Successful: Alice", request, clearScreen, client);
+
+// success bob
+
+cards.Clear();
+
+for(int i = 0; i < 4; ++i)
+{
+    cards.Add(bobCards[i].Guid ?? "");
+}
+
+body = JsonSerializer.Serialize(cards);
+
+request = new(
+    HttpMethods.PUT,
+    ["deck"],
+    body,
+    new()
+    {
+        {"Authorization", bobAuth}
+    }
+);
+
+PrintResult("PUT /deck", "Successful: Bob", request, clearScreen, client);
+
+// GET /deck after successful PUT
+
+// success alice
+request = new(
+    HttpMethods.GET,
+    ["deck"],
+    new()
+    {
+        {"Authorization", aliceAuth}
+    }
+);
+
+PrintResult("GET /deck", "Successful: Alice deck", request, clearScreen, client);
+
+// success bob
+request = new(
+    HttpMethods.GET,
+    ["deck"],
+    new()
+    {
+        {"Authorization", bobAuth}
+    }
+);
+
+PrintResult("GET /deck", "Successful: Bob deck", request, clearScreen, client);
+
+// GET /tradings
+
+request = new(
+    HttpMethods.GET,
+    ["tradings"],
+    new()
+    {
+        {"Authorization", aliceAuth}
+    }
+);
+
+PrintResult("GET /tradings", "Successful: No tradingdeals available", request, clearScreen, client);
+
+// POST /tradings
+
+// success alice
+
+TradeOffer offer = new()
+{
+    CardType = "monster",
+    CardGuid = aliceCards[5].Guid,
+    MinDamage = 20
+};
+
+body = JsonSerializer.Serialize(offer);
+
+request = new(
+    HttpMethods.POST,
+    ["tradings"],
+    body,
+    new()
+    {
+        {"Authorization", aliceAuth}
+    }
+);
+
+PrintResult("POST /tradings", "Successful: Alice", request, clearScreen, client);
+
+// success bob
+
+offer = new()
+{
+    CardType = "spell",
+    CardGuid = bobCards[5].Guid,
+    MinDamage = 40
+};
+
+body = JsonSerializer.Serialize(offer);
+
+request = new(
+    HttpMethods.POST,
+    ["tradings"],
+    body,
+    new()
+    {
+        {"Authorization", bobAuth}
+    }
+);
+
+PrintResult("POST /tradings", "Successful: Bob", request, clearScreen, client);
+
+// GET /tradings
+
+request = new(
+    HttpMethods.GET,
+    ["tradings"],
+    new()
+    {
+        {"Authorization", aliceAuth}
+    }
+);
+
+PrintResult("GET /tradings", "Successful: No tradingdeals available", request, clearScreen, client);
+
+// GET /tradings/:username
+
+request = new(
+    HttpMethods.GET,
+    ["tradings", "Alice"],
+    new()
+    {
+        {"Authorization", aliceAuth}
+    }
+);
+
+response = PrintResult("GET /tradings", "Successful: Alice", request, clearScreen, client);
+
+List<TradeCode> aliceTrades = JsonSerializer.Deserialize<List<TradeCode>>(response.Body) ?? [];
+
+request = new(
+    HttpMethods.GET,
+    ["tradings", "Bob"],
+    new()
+    {
+        {"Authorization", bobAuth}
+    }
+);
+
+response = PrintResult("GET /tradings", "Successful: Bob", request, clearScreen, client);
+
+List<TradeCode> bobTrades = JsonSerializer.Deserialize<List<TradeCode>>(response.Body) ?? [];
+
+// DEL /tradings/:guid
+
+// success alice
+
+request = new(
+    HttpMethods.DELETE,
+    ["tradings", aliceTrades[0].TradeId ?? "unable to retrieve token from last request"],
+    new()
+    {
+        {"Authorization", aliceAuth}
+    }
+);
+
+PrintResult("DELETE /tradings/:guid", "Successful: Alice", request, clearScreen, client);
+
+// GET /tradings/:username
+
+request = new(
+    HttpMethods.GET,
+    ["tradings", "Alice"],
+    new()
+    {
+        {"Authorization", aliceAuth}
+    }
+);
+
+PrintResult("GET /tradings", "Successful: Alice", request, clearScreen, client);
+
+// POST /tradings/:guid
+
+body = JsonSerializer.Serialize("unlucky no spell drawn");
+
+foreach(var card in aliceCards[4..15])
+{
+    if(card.Type == "spell")
+    {
+        body = JsonSerializer.Serialize(card.Guid ?? "unable to retrieve card guid");
+        break;
+    }
+}
+
+request = new(
+    HttpMethods.POST,
+    ["tradings", bobTrades[0].TradeId ?? "unable to retrieve trade id for bobs request"],
+    body,
+    new()
+    {
+        {"Authorization", aliceAuth}
+    }
+);
+
+PrintResult("POST /tradings/:guid", "Successful: Alice accepts bobs trade", request, clearScreen, client);
+
+// GET /tradings
+
+request = new(
+    HttpMethods.GET,
+    ["tradings"],
+    new()
+    {
+        {"Authorization", aliceAuth}
+    }
+);
+
+PrintResult("GET /tradings", "Successful: No tradingdeals available", request, clearScreen, client);
+
+// GET /stats
+
+request = new(
+    HttpMethods.GET,
+    ["stats"],
+    new()
+    {
+        {"Authorization", aliceAuth}
+    }
+);
+
+PrintResult("GET /stats", "Successful: Alice", request, clearScreen, client);
+
+request = new(
+    HttpMethods.GET,
+    ["stats"],
+    new()
+    {
+        {"Authorization", bobAuth}
+    }
+);
+
+PrintResult("GET /stats", "Successful: Bob", request, clearScreen, client);
+
+// GET /scoreboard
+
+request = new(
+    HttpMethods.GET,
+    ["scoreboard"],
+    new()
+    {
+        {"Authorization", aliceAuth}
+    }
+);
+
+PrintResult("GET /scoreboard", "Successful: Scoreboard", request, clearScreen, client);
+
+// POST /battles
+
+HttpRequest AliceRequest = new(
+    HttpMethods.POST,
+    ["battles"],
+    new()
+    {
+        {"Authorization", aliceAuth}
+    }
+);
+
+Task parallelBattle = new(() => client.SendRequest(AliceRequest));
+parallelBattle.Start();
+
+request = new(
+    HttpMethods.POST,
+    ["battles"],
+    new()
+    {
+        {"Authorization", bobAuth}
+    }
+);
+
+PrintResult("POST /battles", "Successful: Alice vs Bob", request, clearScreen, client);
