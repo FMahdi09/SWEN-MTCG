@@ -49,6 +49,12 @@ public class BattleHandler
             // wait for battle result
             string battleLog = user.WaitForBattleLog();
 
+            // check for win or loss
+            if(user.BattleWon)
+                unit.ScoreRepository.AddWin(user);
+            else
+                unit.ScoreRepository.AddLoss(user);
+
             // return battle result
             return new HttpResponse("200 OK", JsonSerializer.Serialize(battleLog));
         }

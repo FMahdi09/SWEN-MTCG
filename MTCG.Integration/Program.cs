@@ -763,4 +763,33 @@ request = new(
     }
 );
 
-PrintResult("POST /battles", "Successful: Alice vs Bob", request, clearScreen, client);
+response = client.SendRequest(request);
+
+System.Console.WriteLine("############################################################");
+System.Console.WriteLine("# POST /battles");
+System.Console.WriteLine("############################################################");
+System.Console.WriteLine($"# Successful: Alice vs Bob");
+System.Console.WriteLine("############################################################");
+System.Console.WriteLine();
+System.Console.WriteLine(request);
+System.Console.WriteLine("############################################################");
+System.Console.WriteLine(JsonSerializer.Deserialize<string>(response.Body));
+System.Console.ReadKey();
+if(clearScreen)
+{
+    System.Console.Clear();
+    System.Console.WriteLine("\x1b[3J");
+}
+
+// GET /scoreboard
+
+request = new(
+    HttpMethods.GET,
+    ["scoreboard"],
+    new()
+    {
+        {"Authorization", aliceAuth}
+    }
+);
+
+PrintResult("GET /scoreboard", "Successful: Scoreboard", request, clearScreen, client);

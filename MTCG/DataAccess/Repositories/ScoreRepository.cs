@@ -64,4 +64,35 @@ public class ScoreRepository(IDbConnection connection) : BaseRepository(connecti
 
         return scoreboard;
     }
+
+    // UPDATE
+    public void AddWin(User user)
+    {
+        // create command
+        using NpgsqlCommand command = new();
+        command.CommandText = "UPDATE users " + 
+                              "SET score = score + 5, wins = wins + 1 " + 
+                              "WHERE id = @userid";
+
+        // add parameter
+        command.AddParameterWithValue("userid", DbType.Int32, user.Id);
+
+        // execute command
+        ExecuteNonQuery(command);
+    }
+    
+    public void AddLoss(User user)
+    {
+        // create command
+        using NpgsqlCommand command = new();
+        command.CommandText = "UPDATE users " + 
+                              "SET score = score - 3, losses = losses + 1 " + 
+                              "WHERE id = @userid";
+
+        // add parameter
+        command.AddParameterWithValue("userid", DbType.Int32, user.Id);
+
+        // execute command
+        ExecuteNonQuery(command);
+    } 
 }

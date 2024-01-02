@@ -5,9 +5,10 @@ namespace SWEN.MTCG.Models.Base;
 public abstract class BattleAble(string username)
 {
     public string Username { get; set; } = username;
+    public bool BattleWon { get; set; } = false;
     private readonly EventWaitHandle _ewh = new(false, EventResetMode.AutoReset);
-    private readonly Random _rng = new();
     private List<Card> _deck = [];
+    private readonly Random _rng = new();
     private string _log = "";
 
     public string BattleLog
@@ -47,6 +48,11 @@ public abstract class BattleAble(string username)
         _deck = deck;
         
         return true;
+    }
+
+    public int CardsLeft()
+    {
+        return _deck.Count;
     }
 
     public string WaitForBattleLog()
