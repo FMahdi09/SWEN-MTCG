@@ -68,7 +68,7 @@ The testing framework used is NUnit and all tests follow the AAA pattern.
 
 ## Unique feature
 
-The matchhistory of all users is stored with a short description, game result and date + time when the game was played.
+The matchhistory of all users is stored with a short description and game result.
 The matchhistory can be aquired through the resource GET /history.
 
 Example output:
