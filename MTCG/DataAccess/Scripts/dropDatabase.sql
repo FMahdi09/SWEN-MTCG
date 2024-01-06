@@ -25,3 +25,7 @@ DROP TABLE IF EXISTS createdcards CASCADE;
 -- tradingdeals
 
 DROP TABLE IF EXISTS tradingdeals CASCADE;
+
+-- matchhistory
+
+DROP TABLE IF EXISTS matchhistory CASCADE;

@@ -793,3 +793,30 @@ request = new(
 );
 
 PrintResult("GET /scoreboard", "Successful: Scoreboard", request, clearScreen, client);
+
+// GET /matchhistory
+
+// success alice
+request = new(
+    HttpMethods.GET,
+    ["history"],
+    new()
+    {
+        {"Authorization", aliceAuth}
+    }
+);
+
+PrintResult("GET /history", "Successful: Alice", request, clearScreen, client);
+
+// success bob
+request = new(
+    HttpMethods.GET,
+    ["history"],
+    new()
+    {
+        {"Authorization", bobAuth}
+    }
+);
+
+PrintResult("GET /history", "Successful: Bob", request, clearScreen, client);
+

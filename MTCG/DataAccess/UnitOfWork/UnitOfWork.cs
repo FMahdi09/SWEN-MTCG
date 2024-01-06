@@ -79,6 +79,17 @@ internal class UnitOfWork : IDisposable
         }
     }
 
+    private MatchHistoryRepository? _matchHistoryRepository;
+
+    public MatchHistoryRepository MatchHistoryRepository
+    {
+        get
+        {
+            _matchHistoryRepository ??= new(_connection);
+            return _matchHistoryRepository;
+        }
+    }
+
     // constructor
     public UnitOfWork(string connectionString, bool withTransaction)
     {            

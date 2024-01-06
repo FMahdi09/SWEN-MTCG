@@ -3,6 +3,7 @@ using System.Text.Json;
 using Npgsql;
 using SWEN.HttpServer;
 using SWEN.HttpServer.Enums;
+using SWEN.MTCG.Businesslogic.Battle;
 using SWEN.MTCG.BusinessLogic.Attributes;
 using SWEN.MTCG.BusinessLogic.Battle;
 using SWEN.MTCG.DataAccess.UnitOfWork;
@@ -50,10 +51,13 @@ public class BattleHandler
             string battleLog = user.WaitForBattleLog();
 
             // check for win or loss
-            if(user.BattleWon)
+            if(user.BattleResult == BattleResult.win)
                 unit.ScoreRepository.AddWin(user);
-            else
+            else if(user.BattleResult == BattleResult.lose)
                 unit.ScoreRepository.AddLoss(user);
+
+            // add history
+            unit.MatchHistoryRepository.InsertHistory(user.History, user.BattleResult, user);
 
             // return battle result
             return new HttpResponse("200 OK", JsonSerializer.Serialize(battleLog));

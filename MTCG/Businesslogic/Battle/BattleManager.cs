@@ -1,5 +1,6 @@
 using System.Collections.Concurrent;
 using System.Text;
+using SWEN.MTCG.Businesslogic.Battle;
 using SWEN.MTCG.Models.Base;
 using SWEN.MTCG.Models.DataModels;
 
@@ -35,6 +36,10 @@ public class BattleManager
         // send result to participants
         participantA.BattleLog = battleLog;
         participantB.BattleLog = battleLog;
+
+        string summary = $"{ participantA.Username } vs { participantB.Username }";
+        participantA.History = summary;
+        participantB.History = summary;
     }
 
     private string Battle(BattleAble participantA, BattleAble participantB)
@@ -48,14 +53,14 @@ public class BattleManager
             if(participantA.DrawRandomCard() is not Card cardA)
             {
                 battleLog.AppendLine($"{ participantA.Username } is out of cards. { participantB.Username } wins the game.");
-                participantB.BattleWon = true;
+                participantB.BattleResult = BattleResult.win;
                 return battleLog.ToString();
             }
             
             if(participantB.DrawRandomCard() is not Card cardB)
             {
                 battleLog.AppendLine($"{ participantB.Username } is out of cards. { participantA.Username } wins the game.");
-                participantA.BattleWon = true;
+                participantA.BattleResult = BattleResult.win;
                 return battleLog.ToString();
             }
             
@@ -98,13 +103,19 @@ public class BattleManager
 
         if(remainingA < remainingB)
         {
-            participantB.BattleWon = true;
+            participantB.BattleResult = BattleResult.win;
             battleLog.AppendLine($"{ participantB.Username } won the battle!");
         }
         else if(remainingA > remainingB)
         {
-            participantA.BattleWon = true;
+            participantA.BattleResult = BattleResult.win;
             battleLog.AppendLine($"{ participantA.Username } won the battle!");
+        }
+        else
+        {
+            participantA.BattleResult = BattleResult.draw;
+            participantB.BattleResult = BattleResult.draw;
+            battleLog.AppendLine("The battle ended in a draw");
         }
 
         return battleLog.ToString();

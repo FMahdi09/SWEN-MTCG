@@ -91,4 +91,18 @@ CREATE TABLE IF NOT EXISTS tradingdeals(
     CONSTRAINT fkCardtypeId
         FOREIGN KEY(cardtypeid)
             REFERENCES cardtypes(id)
-)
+);
+
+-- match history
+
+CREATE TABLE IF NOT EXISTS matchhistory(
+    id SERIAL NOT NULL UNIQUE,
+    description VARCHAR NOT NULL,
+    result VARCHAR NOT NULL,
+    userid INT NOT NULL,
+    gametime TIMESTAMP NOT NULL DEFAULT NOW(),
+    -- constraints
+    CONSTRAINT fkUserid
+        FOREIGN KEY(userid)
+            REFERENCES users(id)
+);

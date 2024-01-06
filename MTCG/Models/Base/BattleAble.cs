@@ -1,3 +1,4 @@
+using SWEN.MTCG.Businesslogic.Battle;
 using SWEN.MTCG.Models.DataModels;
 
 namespace SWEN.MTCG.Models.Base;
@@ -5,7 +6,8 @@ namespace SWEN.MTCG.Models.Base;
 public abstract class BattleAble(string username)
 {
     public string Username { get; set; } = username;
-    public bool BattleWon { get; set; } = false;
+    public BattleResult BattleResult { get; set; } = BattleResult.lose;
+    public string History { get; set; } = "";
     private readonly EventWaitHandle _ewh = new(false, EventResetMode.AutoReset);
     private List<Card> _deck = [];
     private readonly Random _rng = new();
