@@ -13,6 +13,19 @@ public class PostSessionTests
 {
     private SessionHandler _sessionHandler;
 
+    private readonly UserCredentials aliceCredentials = new()
+    {
+        Username = "Alice",
+        Password = "password"
+    };
+
+    private readonly UserCredentials wrongCredentials = new()
+    {
+        Username = "Bob",
+        Password = "wrong password"
+    };
+
+
     [SetUp]
     public void SetUp()
     {
@@ -35,20 +48,14 @@ public class PostSessionTests
     public void InvalidBody()
     {
         // arrange 
+        string body = "invalid body";
 
-        // body
-        string body = "not valid";
-
-        // headers
-        Dictionary<string, string> headers = new()
-        {
-            {"Content-Length", body.Length.ToString()}
-        };
-
-        // resource
-        string[] resource = ["session"];
-
-        HttpRequest request = new(HttpMethods.GET, resource, body, headers);
+        HttpRequest request = new(
+            HttpMethods.POST,
+            ["session"],
+            body,
+            []
+        );
 
         // act
         HttpResponse response = _sessionHandler.PostSession(request);
@@ -61,26 +68,14 @@ public class PostSessionTests
     public void InvalidCredentials()
     {
         // arrange 
+        string body = JsonSerializer.Serialize(wrongCredentials);
 
-        // body
-        UserCredentials credentials = new()
-        {
-            Username = "Alice",
-            Password = "wrong password"
-        };
-
-        string body = JsonSerializer.Serialize(credentials);
-
-        // headers
-        Dictionary<string, string> headers = new()
-        {
-            {"Content-Length", body.Length.ToString()}
-        };
-
-        // resource
-        string[] resource = ["session"];
-
-        HttpRequest request = new(HttpMethods.GET, resource, body, headers);
+        HttpRequest request = new(
+            HttpMethods.POST,
+            ["session"],
+            body,
+            []
+        );
 
         // act
         HttpResponse response = _sessionHandler.PostSession(request);
@@ -93,26 +88,14 @@ public class PostSessionTests
     public void Successfull()
     {
         // arrange 
+        string body = JsonSerializer.Serialize(aliceCredentials);
 
-        // body
-        UserCredentials credentials = new()
-        {
-            Username = "Alice",
-            Password = "password"
-        };
-
-        string body = JsonSerializer.Serialize(credentials);
-
-        // headers
-        Dictionary<string, string> headers = new()
-        {
-            {"Content-Length", body.Length.ToString()}
-        };
-
-        // resource
-        string[] resource = ["session"];
-
-        HttpRequest request = new(HttpMethods.GET, resource, body, headers);
+        HttpRequest request = new(
+            HttpMethods.POST,
+            ["session"],
+            body,
+            []
+        );
 
         // act
         HttpResponse response = _sessionHandler.PostSession(request);

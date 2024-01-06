@@ -14,6 +14,18 @@ public class PostUserTests
 {
     private UserHandler _userHandler;
 
+    private readonly UserCredentials aliceCredentials = new()
+    {
+        Username = "Alice",
+        Password = "passworod"
+    };
+    
+    private readonly UserCredentials bobCredentials = new()
+    {
+        Username = "Bob",
+        Password = "password"
+    };
+
     [SetUp]
     public void SetUp()
     {
@@ -36,26 +48,14 @@ public class PostUserTests
     public void Successfull()
     {
         // arrange
+        string body = JsonSerializer.Serialize(aliceCredentials);
 
-        // body
-        UserCredentials userCredentials = new()
-        {
-            Username = "Alice",
-            Password = "password"
-        };
-
-        string body = JsonSerializer.Serialize(userCredentials);
-
-        // headers
-        Dictionary<string, string> headers = new()
-        {
-            {"Content-Length", body.Length.ToString()}
-        };
-
-        // resource
-        string[] resource = ["users"];
-
-        HttpRequest request = new(HttpMethods.GET, resource, body, headers);
+        HttpRequest request = new(
+            HttpMethods.POST,
+            ["users"],
+            body,
+            []
+        );
 
         // act
         HttpResponse response = _userHandler.PostUser(request);
@@ -67,21 +67,15 @@ public class PostUserTests
     [Test]
     public void InvalidBody()
     {
-        // arrange 
+        // arrange
+        string body = "invalid body"; 
 
-        // body
-        string body = "not valid";
-
-        // headers
-        Dictionary<string, string> headers = new()
-        {
-            {"Content-Length", body.Length.ToString()}
-        };
-
-        // resource
-        string[] resource = ["users"];
-
-        HttpRequest request = new(HttpMethods.GET, resource, body, headers);
+        HttpRequest request = new(
+            HttpMethods.POST,
+            ["users"],
+            body,
+            []
+        );
 
         // act
         HttpResponse response = _userHandler.PostUser(request);
@@ -94,26 +88,14 @@ public class PostUserTests
     public void UsernameExists()
     {
         // arrange
+        string body = JsonSerializer.Serialize(bobCredentials);
 
-        // body
-        UserCredentials userCredentials = new()
-        {
-            Username = "Bob",
-            Password = "password"
-        };
-
-        string body = JsonSerializer.Serialize(userCredentials);
-
-        // headers
-        Dictionary<string, string> headers = new()
-        {
-            {"Content-Length", body.Length.ToString()}
-        };
-
-        // resource
-        string[] resource = ["users"];
-
-        HttpRequest request = new(HttpMethods.GET, resource, body, headers);
+        HttpRequest request = new(
+            HttpMethods.POST,
+            ["users"],
+            body,
+            []
+        );
 
         // act
         HttpResponse successfullResponse = _userHandler.PostUser(request);

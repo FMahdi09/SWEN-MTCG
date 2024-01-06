@@ -1,0 +1,82 @@
+using System.Text.Json;
+using NUnit.Framework;
+using SWEN.DbInitializer;
+using SWEN.HttpServer;
+using SWEN.HttpServer.Enums;
+using SWEN.MTCG.BusinessLogic.EndpointHandlers;
+using SWEN.MTCG.Integration;
+using SWEN.MTCG.Models.DataModels;
+using SWEN.MTCG.Models.SerializationObjects;
+
+namespace SWEN.MTCG.Tests.EndPointHandler.Users;
+
+[TestFixture]
+public class PostPackagesTests
+{
+    private TransactionHandler _transactionHandler;
+
+    [SetUp]
+    public void SetUp()
+    {
+        // initialize handler
+        _transactionHandler = new("Host=localhost;Username=postgres;Password=postgres;Database=testdb");
+
+        // initialize database
+        DbConfig config = new(
+            connectionString: "Host=localhost;Username=postgres;Password=postgres;Database=testdb",
+            fillScript: @"C:\Users\fabia\Documents\Technikum\SWEN\Semesterprojekt\MTCG.Tests\Scripts\fillDatabasePostPackage.sql",
+            createScript: @"C:\Users\fabia\Documents\Technikum\SWEN\Semesterprojekt\MTCG\DataAccess\Scripts\createDatabase.sql",
+            dropScript: @"C:\Users\fabia\Documents\Technikum\SWEN\Semesterprojekt\MTCG\DataAccess\Scripts\dropDatabase.sql"
+        );
+
+        DBInitializer initializer = new(config);
+        initializer.InitDB();
+    }
+
+    [Test]
+    public void Successful()
+    {
+        // arrange
+        HttpRequest request = new(
+            HttpMethods.POST,
+            ["transactions", "packages"],
+            new()
+            {
+                {"Authorization", "alice-token"}
+            }
+        );
+
+        // act
+        HttpResponse response = _transactionHandler.PostPackage(request);
+
+        List<Card> package = JsonSerializer.Deserialize<List<Card>>(response.Body) ?? [];
+        
+        // assert
+        Assert.That(package, Has.Count.EqualTo(4));
+    }
+
+    [Test]
+    public void OutOfMoney()
+    {
+        // arrange
+        HttpRequest request = new(
+            HttpMethods.POST,
+            ["transactions", "packages"],
+            new()
+            {
+                {"Authorization", "bob-token"}
+            }
+        );
+
+        // act
+        _transactionHandler.PostPackage(request);
+        _transactionHandler.PostPackage(request);
+        _transactionHandler.PostPackage(request);
+        _transactionHandler.PostPackage(request);
+        
+        HttpResponse response = _transactionHandler.PostPackage(request);
+
+        // assert
+        Assert.That(response.Status, Is.EqualTo("409 Conflict"));
+    }
+}

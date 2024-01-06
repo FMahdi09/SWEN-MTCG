@@ -21,6 +21,7 @@
     <ProjectReference Include="..\DBInitializer\DBInitializer.csproj" />
     <ProjectReference Include="..\HttpServer\HttpServer.csproj" />
     <ProjectReference Include="..\MTCG\MTCG.csproj" />
+    <ProjectReference Include="..\MTCG.Integration\MTCG.Integration.csproj" />
   </ItemGroup>
 
 </Project>

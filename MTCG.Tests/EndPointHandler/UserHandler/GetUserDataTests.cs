@@ -1,13 +1,15 @@
-using System.Diagnostics;
+using System.Text.Json;
+using NUnit.Framework;
 using SWEN.DbInitializer;
 using SWEN.HttpServer;
 using SWEN.HttpServer.Enums;
 using SWEN.MTCG.BusinessLogic.EndpointHandlers;
+using SWEN.MTCG.Models.SerializationObjects;
 
-namespace SWEN.MTCG.Tests.EndpointHandler.Users;
+namespace SWEN.MTCG.Tests.EndPointHandler.Users;
 
 [TestFixture]
-public class GetUserTests
+public class GetUserDataTests
 {
     private UserHandler _userHandler;
 
@@ -20,7 +22,7 @@ public class GetUserTests
         // initialize database
         DbConfig config = new(
             connectionString: "Host=localhost;Username=postgres;Password=postgres;Database=testdb",
-            fillScript: @"C:\Users\fabia\Documents\Technikum\SWEN\Semesterprojekt\MTCG.Tests\Scripts\fillDatabaseGetUser.sql",
+            fillScript: @"C:\Users\fabia\Documents\Technikum\SWEN\Semesterprojekt\MTCG.Tests\Scripts\fillDatabaseGetUserData.sql",
             createScript: @"C:\Users\fabia\Documents\Technikum\SWEN\Semesterprojekt\MTCG\DataAccess\Scripts\createDatabase.sql",
             dropScript: @"C:\Users\fabia\Documents\Technikum\SWEN\Semesterprojekt\MTCG\DataAccess\Scripts\dropDatabase.sql"
         );
@@ -30,7 +32,7 @@ public class GetUserTests
     }
 
     [Test]
-    public void InvalidToken()
+    public void Successful()
     {
         // arrange
         HttpRequest request = new(
@@ -38,48 +40,36 @@ public class GetUserTests
             ["users", "Alice"],
             new()
             {
-                {"Authorization", "invalid-token"}
+                {"Authorization", "alice-token"}
             }
         );
 
         // act
         HttpResponse response = _userHandler.GetUser(request);
 
+        UserData? data = JsonSerializer.Deserialize<UserData>(response.Body);
+
         // assert
-        Debug.Assert(response.Status == "401 Unauthorized", "GET /users/:username failed with invalid auth token");
+        Assert.That(data, Is.Not.EqualTo(null));
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(data.Username, Is.EqualTo("Alice"));
+            Assert.That(data.Bio, Is.EqualTo("alice-bio"));
+            Assert.That(data.Image, Is.EqualTo("alice-image"));
+        });
     }
-    
+
     [Test]
-    public void InvalidUsername()
+    public void InvalidUser()
     {
         // arrange
         HttpRequest request = new(
             HttpMethods.GET,
-            ["users", "Bob"],
+            ["users", "Charlie"],
             new()
             {
-                {"Authorization", "test-token"}
-            }
-        );
-
-        // act
-        HttpResponse response = _userHandler.GetUser(request);
-
-
-        // assert
-        Debug.Assert(response.Status == "401 Unauthorized", "GET /users/:username failed with invalid username");
-    }
-
-    [Test]
-    public void Successfull()
-    {
-        // arrange
-        HttpRequest request = new(
-            HttpMethods.GET,
-            ["users", "Alice"],
-            new()
-            {
-                {"Authorization", "test-token"}
+                {"Authorization", "alice-token"}
             }
         );
 
@@ -87,6 +77,6 @@ public class GetUserTests
         HttpResponse response = _userHandler.GetUser(request);
 
         // assert
-        Debug.Assert(response.Status == "200 OK", "GET /users/:username failed with invalid username");
+        Assert.That(response.Status, Is.EqualTo("401 Unauthorized"));
     }
 }
